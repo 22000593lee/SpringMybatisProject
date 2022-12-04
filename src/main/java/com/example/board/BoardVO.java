@@ -1,4 +1,4 @@
-package bean;
+package com.example.board;
 
 import java.util.Date;
 
