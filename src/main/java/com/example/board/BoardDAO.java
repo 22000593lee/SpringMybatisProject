@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.board.BoardVO;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,40 +17,30 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class BoardDAO {
-	
-	//Connection conn = null;
-	//PreparedStatement stmt = null;
-	//ResultSet rs = null;
-
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	SqlSession sqlSession;
 
 	public int insertBoard(BoardVO vo) {
-		String sql = "insert into BOARD (title, writer, content) values ("
-				+"'"+vo.getTitle()+"',"
-				+"'"+vo.getWriter()+"',"
-				+"'"+vo.getContent()+"')";
-		return jdbcTemplate.update(sql);
+		int count = sqlSession.insert("Board.insertBoard", vo);
+		return count;
 	}
 	public int deleteBoard(int seq) {
-		String sql = "delete from BOARD where seq="+seq;
-		return jdbcTemplate.update(sql);
+		int count = sqlSession.delete("Board.deleteBoard",seq);
+		return count;
 	}
 	public int updateBoard(BoardVO vo) {
-		String sql = "update BOARD set title='"+vo.getTitle()+"',"
-				+" writer='"+vo.getWriter()+"',"
-				+" content='"+vo.getContent()+"' where seq="+vo.getSeq();
-		return jdbcTemplate.update(sql);
+		int count = sqlSession.update("Board.updateBoard", vo);
+		return count;
 	}	
 	
 	public BoardVO getBoard(int seq) {
-		String sql = "select * from BOARD where seq="+seq;
-		return jdbcTemplate.queryForObject(sql, new BoardLowMapper());
+		BoardVO one = sqlSession.selectOne("Board.getBoard",seq);
+		return one;
 	}
 	
 	public List<BoardVO> getBoardList(){
-		String sql = "select * from BOARD order by regdate desc";
-		return jdbcTemplate.query(sql, new BoardLowMapper());
+		List<BoardVO> list = sqlSession.selectList("Board.getBoardList");
+		return list;
 	}
 
 
